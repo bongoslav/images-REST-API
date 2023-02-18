@@ -29,10 +29,6 @@ const upload = multer({
   storage: multer.memoryStorage(),
 });
 
-// TODO: testing
-// TODO: status codes
-// TODO: how it can be scaled
-
 // routes
 app.get("/images", (req, res) => {
   const maxLat = req.query.maxLat;
@@ -110,7 +106,6 @@ app.post("/upload", upload.single("image"), (req, res) => {
   const query =
     "INSERT INTO images (originalName, latitude, longitude, data) VALUES(?, ?, ?, ?);";
 
-  // should I store the image as a buffer or encode it in base64?
   db.run(query, [originalname, latitude, longitude, buffer], (err, row) => {
     if (err) {
       throw err;
