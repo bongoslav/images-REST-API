@@ -46,6 +46,11 @@ POST /upload
 ```
 DELETE /images/:id
 ```
+# Additional info
+- All logic is in single file as per requirements.
+- Successful tests have been made in Postman and CURL.
+- Images are stored in the DB as BLOBs. On the first iteration I stored the images on the fs but after some research I implemented the BLOB data type in the DB. Not sure if they should be encoded.
+- Thumbnails are not stored in DB, they are being generated per request.
 
 # Problem description
 Your task is to design a service that:
