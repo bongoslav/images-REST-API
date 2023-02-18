@@ -14,7 +14,7 @@ const port = 3000;
 const db = new sqlite3.Database("database.sqlite");
 db.serialize(() => {
   db.run(
-    `CREATE TABLE IF NOT EXISTS images_Info (
+    `CREATE TABLE IF NOT EXISTS images_info (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
           originalName TEXT NOT NULL,
           latitude FLOAT,
@@ -38,7 +38,7 @@ app.get("/images", (req, res) => {
 
   const query = `SELECT
   id, originalName, latitude, longitude
-  FROM images WHERE
+  FROM images_info WHERE
   latitude BETWEEN ${minLat} AND ${maxLat} AND
   longitude BETWEEN ${minLong} AND ${maxLong};`;
 
@@ -59,7 +59,7 @@ app.get("/images/:id/:thumbnail?", async (req, res) => {
   const thumbnailOptions = { width: 256, height: 256 };
 
   const query =
-    "SELECT id, originalName, latitude, longitude, data FROM images WHERE id = ?";
+    "SELECT id, originalName, latitude, longitude, data FROM images_info WHERE id = ?";
   db.get(query, id, async (err, row) => {
     if (err) {
       throw err;
@@ -104,7 +104,7 @@ app.post("/upload", upload.single("image"), (req, res) => {
   }
 
   const query =
-    "INSERT INTO images (originalName, latitude, longitude, data) VALUES(?, ?, ?, ?);";
+    "INSERT INTO images_info (originalName, latitude, longitude, data) VALUES(?, ?, ?, ?);";
 
   db.run(query, [originalname, latitude, longitude, buffer], (err, row) => {
     if (err) {
@@ -117,18 +117,18 @@ app.post("/upload", upload.single("image"), (req, res) => {
 app.delete("/images/:id", (req, res) => {
   const id = req.params.id;
 
-  const query = "DELETE FROM images WHERE id = ?";
+  const query = "DELETE FROM images_info WHERE id = ?";
   db.run(query, id, (err) => {
     if (err) {
       throw err;
     }
   });
-  return res.send(`File with id: ${id} deleted`);
+  return res.send(`Image with id: ${id} has been deleted if such ID exists.`);
 });
 
 app.get("/all-images", (req, res) => {
   db.all(
-    "SELECT id, originalName, latitude, longitude FROM images;",
+    "SELECT id, originalName, latitude, longitude FROM images_info;",
     (err, rows) => {
       if (err) {
         throw err;
