@@ -20,7 +20,12 @@ db.serialize(() => {
           latitude FLOAT,
           longitude FLOAT,
           data BLOB
-          )`
+          )`,
+    (err) => {
+      if (err) {
+        throw err;
+      }
+    }
   );
 });
 
@@ -47,7 +52,7 @@ app.get("/images", (req, res) => {
       throw err;
     }
     if (rows.length === 0) {
-      return res.status(500).json({ message: "No rows found." });
+      return res.status(404).json({ message: "No images found." });
     }
     res.status(200).json(rows);
   });
@@ -65,7 +70,7 @@ app.get("/images/:id/:thumbnail?", async (req, res) => {
       throw err;
     }
     if (row === undefined) {
-      return res.status(500).json({ message: `No item found with id: ${id}` });
+      return res.status(404).json({ message: `No image found with id: ${id}` });
     }
 
     if (req.params.thumbnail) {
@@ -110,7 +115,9 @@ app.post("/upload", upload.single("image"), (req, res) => {
     if (err) {
       throw err;
     }
-    res.send({ message: `Image ${originalname} has been uploaded` });
+    res
+      .status(201)
+      .json({ message: `Image ${originalname} has been uploaded` });
   });
 });
 
@@ -123,7 +130,9 @@ app.delete("/images/:id", (req, res) => {
       throw err;
     }
   });
-  return res.send(`Image with id: ${id} has been deleted if such ID exists.`);
+  return res
+    .status(200)
+    .json(`Image with id: ${id} has been deleted if such ID exists.`);
 });
 
 app.get("/all-images", (req, res) => {
@@ -134,7 +143,7 @@ app.get("/all-images", (req, res) => {
         throw err;
       }
       if (rows.length === 0) {
-        res.status(404).send("No images found.");
+        res.status(404).json("No images found.");
         return;
       }
       res.send(rows);
