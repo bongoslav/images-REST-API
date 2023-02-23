@@ -19,7 +19,7 @@ db.serialize(() => {
           originalName TEXT NOT NULL,
           latitude FLOAT,
           longitude FLOAT,
-          data BLOB
+          image BLOB
           )`,
     (err) => {
       if (err) {
@@ -44,10 +44,10 @@ app.get("/images", (req, res) => {
   const query = `SELECT
   id, originalName, latitude, longitude
   FROM images_info WHERE
-  latitude BETWEEN ${minLat} AND ${maxLat} AND
-  longitude BETWEEN ${minLong} AND ${maxLong};`;
+  latitude BETWEEN ? AND ? AND
+  longitude BETWEEN ? AND ? ;`;
 
-  db.all(query, (err, rows) => {
+  db.all(query, [minLat, maxLat, minLong, maxLong], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -64,7 +64,7 @@ app.get("/images/:id/:thumbnail?", async (req, res) => {
   const thumbnailOptions = { width: 256, height: 256 };
 
   const query =
-    "SELECT id, originalName, latitude, longitude, data FROM images_info WHERE id = ?";
+    "SELECT id, originalName, latitude, longitude, image FROM images_info WHERE id = ?";
   db.get(query, id, async (err, row) => {
     if (err) {
       throw err;
@@ -75,7 +75,7 @@ app.get("/images/:id/:thumbnail?", async (req, res) => {
 
     if (req.params.thumbnail) {
       try {
-        thumbnail = await imageThumbnail(row.data, thumbnailOptions);
+        thumbnail = await imageThumbnail(row.image, thumbnailOptions);
       } catch (err) {
         throw err;
       }
@@ -94,7 +94,7 @@ app.get("/images/:id/:thumbnail?", async (req, res) => {
 
 app.post("/upload", upload.single("image"), (req, res) => {
   const { buffer, originalname } = req.file;
-  let exifData;
+  let exif;
   let latitude = null;
   let longitude = null;
 
@@ -109,7 +109,7 @@ app.post("/upload", upload.single("image"), (req, res) => {
   }
 
   const query =
-    "INSERT INTO images_info (originalName, latitude, longitude, data) VALUES(?, ?, ?, ?);";
+    "INSERT INTO images_info (originalName, latitude, longitude, image) VALUES(?, ?, ?, ?);";
 
   db.run(query, [originalname, latitude, longitude, buffer], (err, row) => {
     if (err) {
@@ -135,7 +135,7 @@ app.delete("/images/:id", (req, res) => {
     .json(`Image with id: ${id} has been deleted if such ID exists.`);
 });
 
-app.get("/all-images", (req, res) => {
+app.get("/all-images-info", (req, res) => {
   db.all(
     "SELECT id, originalName, latitude, longitude FROM images_info;",
     (err, rows) => {
