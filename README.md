@@ -24,7 +24,7 @@ npm start
 # Endpoints
 - Get all images' info from the DB:
 ```
-GET /all-images
+GET /all-images-info
 ```
 - Get all images in a lat/long bounding box example:
 ```
