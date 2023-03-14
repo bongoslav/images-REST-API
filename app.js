@@ -58,7 +58,7 @@ app.get("/images", (req, res) => {
   });
 });
 
-app.get("/images/:id/:thumbnail?", async (req, res) => {
+app.get("/images/:id/:thumbnail?", (req, res) => {
   id = req.params.id;
   let thumbnail;
   const thumbnailOptions = { width: 256, height: 256 };
