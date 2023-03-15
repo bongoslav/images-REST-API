@@ -16,8 +16,6 @@ IMAGE_PATH="test-image-1.jpeg"
 RESPONSE=$(curl -X POST -s -w "\nTime taken: %{time_total}s\nHTTP Status: %{http_code}\n" -F "image=@$IMAGE_PATH" "${BASE_URL}${POST_ENDPOINT}")
 HTTP_STATUS=$(echo "$RESPONSE" | awk '/HTTP Status:/ {print $3}')
 RESPONSE_TIME=$(echo "$RESPONSE" | awk '/Time taken:/ {print $3}')
-# HTTP_STATUS=$(echo "$RESPONSE" | awk '/HTTP Status/ {print $3}')
-# RESPONSE_TIME=$(echo "$RESPONSE" | awk -F ': ' '/Time taken/ {print $2}')
 
 if [[ "$HTTP_STATUS" =~ ^2[0-9]{2}$ ]]; then
   echo -n "✅ "
@@ -90,5 +88,3 @@ fi
 echo "DELETE Endpoint: ${DELETE_ENDPOINT}"
 echo "response: ${RESPONSE}"
 echo "----------------"
-
-# add optimisation...
