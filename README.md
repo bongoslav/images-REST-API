@@ -2,6 +2,7 @@
 
 # Dependencies
 - express
+- redis
 - sqlite3
 - multer
 - exif-parser
@@ -17,6 +18,11 @@ git clone https://github.com/bongoslav/myx-backend-challenge.git
 cd <project_name>
 npm install
 ```
+- start redis-server by running:
+```
+redis-server
+```
+
 - Build and run the project
 ```
 npm start
@@ -49,10 +55,13 @@ DELETE /images/:id
 # Additional info
 - All logic is in single file as per requirements.
 - Successful tests have been made in Postman and CURL.
-- Images are stored in the DB as BLOBs. On the first iteration I stored the images on the fs but after some research I implemented the BLOB data type in the DB. Not sure if they should be encoded.
 - Thumbnails are not stored in DB, they are being generated per request.
-- Efficiency: it's better to store images in the fs if the project scales. For such large files it's better to store reference to the image from the fs in the DB. Large files in the DB slow the response times.
-
+- when running the first test all of the data will be initially cached. However the tests include a POST request which flushes the Redis DB, to avoid that feel free to edit the example routes in the bash file.
+- to test the app run:
+```
+cd ./tests
+bash test.sh
+```
 # Problem description
 Your task is to design a service that:
 
