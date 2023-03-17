@@ -159,7 +159,9 @@ app.post("/upload", upload.single("image"), async (req, res) => {
   let latitude = null;
   let longitude = null;
 
-  // const fileName = `${Date.now()}_${originalname}`;
+  if (!fs.existsSync("images")) {
+    fs.mkdirSync("images");
+  }
   const imagePath = path.join("images", originalname);
 
   fs.writeFile(imagePath, buffer, (err) => {
