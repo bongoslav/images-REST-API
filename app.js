@@ -44,7 +44,6 @@ const redisClient = redis.createClient();
 })();
 
 async function getOrSetCache(cacheKey, cb) {
-  // First attempt to retrieve data from the cache
   try {
     const cachedResult = await redisClient.get(cacheKey);
     if (cachedResult) {
@@ -58,7 +57,6 @@ async function getOrSetCache(cacheKey, cb) {
   try {
     // if no cachedResult
     const result = await cb();
-    // Finally, if you got any results, save the data back to the cache
     if (result != null) {
       try {
         await redisClient.set(cacheKey, JSON.stringify(result));
@@ -191,7 +189,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       if (err) {
         throw err;
       }
-      // cleaning the cache because we have new data!
+      // cleaning the cache
       redisClient.flushAll("ASYNC", (err, succeeded) => {
         if (err) {
           throw new Error(err);
@@ -213,6 +211,14 @@ app.delete("/images/:id", (req, res) => {
   db.run(query, id, (err) => {
     if (err) {
       throw err;
+    }
+  });
+  // cleaning the cache
+  redisClient.flushAll("ASYNC", (err, succeeded) => {
+    if (err) {
+      throw new Error(err);
+    } else {
+      console.log("Successful Redis flush.");
     }
   });
   return res
