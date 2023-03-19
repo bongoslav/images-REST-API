@@ -48,7 +48,7 @@ async function getOrSetCache(cacheKey, cb) {
     const cachedResult = await redisClient.get(cacheKey);
     if (cachedResult) {
       console.log("Data from cache.");
-      return JSON.parse(cachedResult);
+      return cachedResult;
     }
   } catch (error) {
     throw new Error("Something happened to Redis", error);
@@ -59,7 +59,7 @@ async function getOrSetCache(cacheKey, cb) {
     const result = await cb();
     if (result != null) {
       try {
-        await redisClient.set(cacheKey, JSON.stringify(result));
+        await redisClient.set(cacheKey, result);
       } catch (error) {
         throw new Error("Error occurred while fetching data.");
       }
@@ -95,7 +95,7 @@ app.get("/images", async (req, res) => {
       });
     });
     if (rows.length === 0) {
-      return JSON.stringify("No images found");
+      return "No images found";
     }
     return rows;
   });
@@ -165,7 +165,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
   fs.writeFile(imagePath, buffer, (err) => {
     if (err) {
       console.error(err);
-      return res.status(500).send("Error uploading image");
+      return res.status(500).json("Error uploading image");
     }
   });
 
@@ -199,7 +199,7 @@ app.post("/upload", upload.single("image"), async (req, res) => {
       });
       res
         .status(201)
-        .json({ message: `Image ${originalname} has been uploaded` });
+        .json(`Image ${originalname} has been uploaded`);
     }
   );
 });
