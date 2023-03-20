@@ -139,8 +139,6 @@ app.get("/images/:id/:thumbnail?", async (req, res) => {
     res.status(404).json(data);
   } else {
     if (req.params.thumbnail) {
-      if (!data.id) {
-      }
       try {
         thumbnail = await imageThumbnail(data.image, thumbnailOptions);
       } catch (err) {
