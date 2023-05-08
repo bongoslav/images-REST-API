@@ -1,4 +1,6 @@
-# MYX Backend Challenge
+# Images REST API
+
+My first practical REST API with Node.js.
 
 # Dependencies
 - express
@@ -11,7 +13,7 @@
 # Starting the app
 - Clone the repository
 ```
-git clone https://github.com/bongoslav/myx-backend-challenge.git
+git clone https://github.com/bongoslav/images-REST-API.git
 ```
 - Install dependencies
 ```
@@ -53,7 +55,6 @@ POST /upload
 DELETE /images/:id
 ```
 # Additional info
-- All logic is in single file as per requirements.
 - Successful tests have been made in Postman and CURL.
 - Thumbnails are not stored in DB, they are being generated per request.
 - when running the first test all of the data will be initially cached. However the tests include a POST request which flushes the Redis DB, to avoid that feel free to edit the example routes in the bash file.
@@ -63,18 +64,8 @@ cd ./tests
 bash test.sh
 ```
 # Problem description
-Your task is to design a service that:
-
+The service:
 1) Allows clients to upload / delete JPEG images through a REST API
 2) Can be queried to return all images inside a geographical bounding box, that is defined by min
-and max latitude/longitude. You can trust the EXIF information inside the JPEG.
+and max latitude/longitude. Getting the info from the image's EXIF data.
 3) Can be queried to return the original image and thumbnail (256x256) version of it.
-
-## Goals
-Simplicity. Couple hundred lines of code, one or two files, few dependencies. No
-need for fancy OOP hierarchy or something like that. Bare minimum that works
-reliably.
-
-Testing.
-
-Efficiency.
